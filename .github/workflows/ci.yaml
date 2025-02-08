@@ -1,0 +1,26 @@
+name: CI Testapp
+
+on:
+    push:
+
+jobs:
+    lint:
+        name: 'Lint code'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Install NodeJS
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: npm install --frozen-lockfile
+
+            - name: Build
+              run: pnpm run build
+
+            - name: Check lint
+              run: pnpm run lint
