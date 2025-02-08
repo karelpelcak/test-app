@@ -25,30 +25,30 @@ jobs:
             - name: Check lint
               run: npm run lint
 
-deploy:
-    runs-on: ubuntu-latest
+  deploy:
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v4
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 3depox.cz >> ~/.ssh/known_hosts
+        - name: Setup SSH
+          run: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H 3depox.cz >> ~/.ssh/known_hosts
 
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          env:
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy over SSH
-        run: |
-          ssh -i ~/.ssh/id_rsa karelpelcak@3depox.cz << 'EOF'
-            cd cd ./repo/test-app
-            git pull 
-            docker stop testapp-container || true
-            docker rm testapp-container || true
-            docker build -t nextjs-app .
-            docker run -d -p 5173:5173 --name testapp-container nextjs-app
-          EOF
+        - name: Deploy over SSH
+          run: |
+            ssh -i ~/.ssh/id_rsa karelpelcak@3depox.cz << 'EOF'
+              cd cd ./repo/test-app
+              git pull 
+              docker stop testapp-container || true
+              docker rm testapp-container || true
+              docker build -t nextjs-app .
+              docker run -d -p 5173:5173 --name testapp-container nextjs-app
+            EOF
